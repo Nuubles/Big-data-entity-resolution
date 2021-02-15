@@ -23,9 +23,6 @@ public class Project {
 			System.out.println(args[0] + " is an invalid file, see error output for details.");
 			return;
 		}
-		for(String[] e : set1) {
-			System.out.println(Arrays.toString(e));
-		}
 
 		Dataset set2 = project.readData(args[1]);
 		if(set2 == null) {
