@@ -1,5 +1,5 @@
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Project {
 	private ArrayList<Blocker> blockers = new ArrayList<Blocker>();
@@ -14,10 +14,11 @@ public class Project {
 			return;
 		}
 
-		// blockers.add(new Blocker());
-
+		// Initialize blockers
 		Project project = new Project();
+		project.addBlocker(new TokenBlocker("Token blocker"));
 
+		// Read data from CSV files
 		Dataset set1 = project.readData(args[0]);
 		if(set1 == null) {
 			System.out.println(args[0] + " is an invalid file, see error output for details.");
@@ -30,6 +31,7 @@ public class Project {
 			return;
 		}
 
+		// Performs blocks for the two given data sets
 		project.performBlocks(set1, set2);
 	}
 
@@ -41,7 +43,13 @@ public class Project {
 	 */
 	public void performBlocks(Dataset set1, Dataset set2) {
 		for(Blocker blocker : blockers) {
-			Object o = blocker.block(set1, set2);
+			blocker.block(set1, set2);
+			try {
+				blocker.writeResults(".\\Results\\" + blocker.getBlockerType() + ".csv");
+			} catch(IOException e) {
+				e.printStackTrace();
+				System.out.println("Failed to write output results for blocker " + blocker.getBlockerType() + ", please clean previous results and try again.");
+			}
 		}
 	}
 
