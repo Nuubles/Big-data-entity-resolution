@@ -3,6 +3,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class CSVReader {
+	/**
+	 * Reads a given file from path into a data set
+	 * @param path1 path to .csv file
+	 * @return csv converted to dataset
+	 */
 	public Dataset read(String path1) {
 		Dataset set = new Dataset();
 

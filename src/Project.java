@@ -21,6 +21,11 @@ public class Project {
 	}
 
 
+	/**
+	 * Runs all blockers with the two given data sets
+	 * @param set1
+	 * @param set2
+	 */
 	public void performBlocks(Dataset set1, Dataset set2) {
 		for(Blocker blocker : blockers) {
 			Object o = blocker.block(set1, set2);
@@ -38,6 +43,10 @@ public class Project {
 	}
 
 
+	/**
+	 * Add a new blocker to be run when the project is run
+	 * @param blocker blocker that should run
+	 */
 	public void addBlocker(Blocker blocker) {
 		this.blockers.add(blocker);
 	}

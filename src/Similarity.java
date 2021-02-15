@@ -2,6 +2,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Similarity {
+	/**
+	 * Splits the strings between each space and comma, and gives similarity measure
+	 * for each word in string
+	 * @param first
+	 * @param second
+	 * @return similarity of the two strings split into words
+	 */
 	public static double jaccardSimilarity(String first, String second) {
 		Set<String> intersection = new HashSet<String>();
 		Set<String> union = new HashSet<String>();
