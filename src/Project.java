@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Project {
 	private ArrayList<Blocker> blockers = new ArrayList<Blocker>();
@@ -10,13 +11,28 @@ public class Project {
 	public static void main(String[] args) {
 		if(args.length != 2) {
 			System.out.println("Please give paths to 2 files containing the data to be blocked when booting the program.");
+			return;
 		}
 
 		// blockers.add(new Blocker());
 
 		Project project = new Project();
+
 		Dataset set1 = project.readData(args[0]);
+		if(set1 == null) {
+			System.out.println(args[0] + " is an invalid file, see error output for details.");
+			return;
+		}
+		for(String[] e : set1) {
+			System.out.println(Arrays.toString(e));
+		}
+
 		Dataset set2 = project.readData(args[1]);
+		if(set2 == null) {
+			System.out.println(args[1] + " is an invalid file, see error output for details.");
+			return;
+		}
+
 		project.performBlocks(set1, set2);
 	}
 
