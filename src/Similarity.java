@@ -14,8 +14,8 @@ public class Similarity {
 		Set<String> union = new HashSet<String>();
 		boolean filledUnion = false;
 
-		String[] set1 = first.split(",| ");
-		String[] set2 = second.split(",| ");
+		String[] set1 = first.split(",\\s|,|\\s");
+		String[] set2 = second.split(",\\s|,|\\s");
 		for(int i = 0; i < set1.length; ++i) {
 			union.add(set1[i]);
 
