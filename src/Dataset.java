@@ -1,8 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 public class Dataset implements Iterable<Entity> {
-	public List<Entity> entities = new ArrayList<Entity>();
+	private List<Entity> entities = new ArrayList<Entity>();
 
 	public void addEntity(Entity entity) {
 		entities.add(entity);
@@ -11,6 +12,6 @@ public class Dataset implements Iterable<Entity> {
 
 	@Override
 	public Iterator<Entity> iterator() {
-		return entities.Iterator();
+		return entities.iterator();
 	}
 }
