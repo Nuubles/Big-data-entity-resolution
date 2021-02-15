@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class CSVReader {
+
 	/**
 	 * Reads a given file from path into a data set
 	 * @param filePath path to .csv file
@@ -22,27 +23,74 @@ public class CSVReader {
 			// read key line
 			String line = reader.readLine();
 			String[] keys = line.split(",");
-			set = new Dataset(keys, lineCount-1);
+
+			// remove ID column from data set keys
+			int idColumnIndex = getIdColumnIndex(keys);
 			int index = 0;
+			for(int i = 0; i < keys.length; ++i) {
+				if(i != idColumnIndex)
+					keys[index++] = keys[i];
+			}
+
+			set = new Dataset(keys, lineCount-1);
+			index = 0;
 
 			// read attribute values, one line is one entity
 			while((line = reader.readLine()) != null) {
 				String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+				removeQuotes(values);
 
-				// remove quotes from strings
-				for(int i = 0; i < keys.length; ++i) {
-					if(values[i].startsWith("\"") && values[i].endsWith("\"")) {
-						values[i] = values[i].substring(1, values[i].length()-1);
-					}
-				}
-
-				set.setEntity(index++, values);
+				// add entity to dataset, remove column with ID
+				int columnIndex = 0;
+				for(int i = 0; i < values.length; ++i)
+				if(i != idColumnIndex)
+					set.setToken(columnIndex++, index, values[i]);
+				++index;
 			}
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 
 		return set;
+	}
+
+
+	/**
+	 * Removes quotes from a string
+	 * @param text
+	 * @return
+	 */
+	private String removeQuotes(String text) {
+		if(text.startsWith("\"") && text.endsWith("\""))
+			return text.substring(1, text.length()-1);
+		return text;
+	}
+
+
+	/**
+	 * Removes quotes from the strings in array
+	 * @param texts array to remove the quotes from
+	 */
+	private void removeQuotes(String[] texts) {
+		for(int i = 0; i < texts.length; ++i) {
+			texts[i] = removeQuotes(texts[i]);
+		}
+	}
+
+
+	/**
+	 * Checks all columns and checks if the string equals "id"
+	 * @param columns
+	 * @return index of column with id, or -1 if none found
+	 */
+	private int getIdColumnIndex(String[] columns) {
+		for(int i = 0; i < columns.length; ++i) {
+			if(columns[i].equals("id")) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 
 
