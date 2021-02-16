@@ -30,6 +30,11 @@ public class Dataset implements Iterable<String[]> {
 	}
 
 
+	public int size() {
+		return tokens.length;
+	}
+
+
 	public String getAttributeName(int attribute) {
 		return attributes[attribute];
 	}

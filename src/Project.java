@@ -16,7 +16,7 @@ public class Project {
 
 		// Initialize blockers
 		Project project = new Project();
-		project.addBlocker(new TokenBlocker("Token blocker"));
+		project.addBlocker(new TokenBlocker());
 
 		// Read data from CSV files
 		Dataset set1 = project.readData(args[0]);
@@ -43,14 +43,19 @@ public class Project {
 	 */
 	public void performBlocks(Dataset set1, Dataset set2) {
 		for(Blocker blocker : blockers) {
+			System.out.println("Running blocker " + blocker.getBlockerType() + "...");
 			blocker.block(set1, set2);
 			try {
-				blocker.writeResults(".\\Results\\" + blocker.getBlockerType() + ".csv");
+				String resultsFile = ".\\" + blocker.getBlockerType() + ".csv";
+				System.out.println("Writing blocker " + blocker.getBlockerType() + " results to " + resultsFile);
+				blocker.writeResults(resultsFile);
+				System.out.println("Finished writing.");
 			} catch(IOException e) {
 				e.printStackTrace();
 				System.out.println("Failed to write output results for blocker " + blocker.getBlockerType() + ", please clean previous results and try again.");
 			}
 		}
+		System.out.println("All blockers have been run.");
 	}
 
 
