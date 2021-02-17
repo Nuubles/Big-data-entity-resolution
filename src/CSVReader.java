@@ -10,7 +10,7 @@ public class CSVReader {
 	 * @param stopper stopper used to remove stop words from read results
 	 * @return csv converted to dataset
 	 */
-	public Dataset read(String filePath, Stopper stopper) {
+	public Dataset read(String filePath, Stopper stopper) throws IOException {
 		BufferedReader reader;
 		Dataset set = null;
 
@@ -18,39 +18,36 @@ public class CSVReader {
 		if(lineCount <= 0)
 			return null;
 
-		try {
-			reader = new BufferedReader(new FileReader(filePath));
+		reader = new BufferedReader(new FileReader(filePath));
 
-			// read key line
-			String line = reader.readLine();
-			String[] keys = line.split(",");
+		// read key line
+		String line = reader.readLine();
+		String[] keys = line.split(",");
 
-			// remove ID column from data set keys
-			int idColumnIndex = getIdColumnIndex(keys);
-			int index = 0;
-			for(int i = 0; i < keys.length; ++i) {
-				if(i != idColumnIndex)
-					keys[index++] = keys[i];
-			}
-
-			set = new Dataset(keys, lineCount-1, stopper);
-			index = 0;
-
-			// read attribute values, one line is one entity
-			while((line = reader.readLine()) != null) {
-				String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-				removeQuotes(values);
-
-				// add entity to dataset, remove column with ID
-				int columnIndex = 0;
-				for(int i = 0; i < values.length; ++i)
-				if(i != idColumnIndex)
-					set.setToken(columnIndex++, index, values[i]);
-				++index;
-			}
-		} catch(IOException e) {
-			e.printStackTrace();
+		// remove ID column from data set keys
+		int idColumnIndex = getIdColumnIndex(keys);
+		int index = 0;
+		for(int i = 0; i < keys.length; ++i) {
+			if(i != idColumnIndex)
+				keys[index++] = keys[i];
 		}
+
+		set = new Dataset(keys, lineCount-1, stopper);
+		index = 0;
+
+		// read attribute values, one line is one entity
+		while((line = reader.readLine()) != null) {
+			String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+			removeQuotes(values);
+
+			// add entity to dataset, remove column with ID
+			int columnIndex = 0;
+			for(int i = 0; i < values.length; ++i)
+			if(i != idColumnIndex)
+				set.setToken(columnIndex++, index, values[i]);
+			++index;
+		}
+		reader.close();
 
 		return set;
 	}
@@ -95,18 +92,13 @@ public class CSVReader {
 	}
 
 
-	private int getLineCount(String file) {
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			int lines = 0;
-			String line;
-			while ((line = reader.readLine()) != null && line.trim().length() > 0)
-				++lines;
-			reader.close();
-			return lines;
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-		return -1;
+	private int getLineCount(String file) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		int lines = 0;
+		String line;
+		while ((line = reader.readLine()) != null && line.trim().length() > 0)
+			++lines;
+		reader.close();
+		return lines;
 	}
 }

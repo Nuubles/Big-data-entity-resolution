@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -71,7 +72,14 @@ public class Project {
 			e.printStackTrace();
 			System.out.println("Failed to load stop words, no word stopping will be used.");
 		}
-		Dataset dataset = reader.read(path1, stopper);
+		Dataset dataset = null;
+		try {
+			dataset = reader.read(path1, stopper);
+		} catch(FileNotFoundException e) {
+			System.out.println("Error: given file " + path1 + " does not exist");
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 		return dataset;
 	}
 
