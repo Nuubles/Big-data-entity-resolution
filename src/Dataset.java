@@ -23,7 +23,7 @@ public class Dataset {
 	 * @param token
 	 */
 	public void setToken(int attribute, int entity, String token) {
-		this.tokens[entity][attribute] = token;
+		this.tokens[entity][attribute] = token.trim();
 		String[] splitted = split(token.toLowerCase());
 		for(int i = 0; i < splitted.length; ++i)
 		if(stopper != null)
@@ -63,7 +63,7 @@ public class Dataset {
 	 * @return
 	 */
 	private String[] split(String token) {
-		return token.split(":\\s|,\\s|,|\\.\\s|\\s");
+		return token.trim().split("\\s:\\s|:\\s+|,\\s+|,|\\.\\s+|\\s+");
 	}
 
 

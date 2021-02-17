@@ -26,6 +26,8 @@ public class TokenBlocker extends Blocker {
 			for(int j = 0; j < set2.size(); ++j) {
 				String[][] secondEntity = set2.getStoppedEntity(j);
 				compareAndStoreEntities(firstEntity, i, secondEntity, j);
+				// remove empty strings from results
+				entityClusters.remove("");
 			}
 		}
 	}
