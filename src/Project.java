@@ -64,7 +64,14 @@ public class Project {
 	 */
 	public Dataset readData(String path1) {
 		CSVReader reader = new CSVReader();
-		Dataset dataset = reader.read(path1);
+		Stopper stopper = null;
+		try {
+			stopper = Stopper.loadFromFile("english_stopwords.txt");
+		} catch(IOException | SecurityException e) {
+			e.printStackTrace();
+			System.out.println("Failed to load stop words, no word stopping will be used.");
+		}
+		Dataset dataset = reader.read(path1, stopper);
 		return dataset;
 	}
 

@@ -22,9 +22,9 @@ public class TokenBlocker extends Blocker {
 	@Override
 	public void block(Dataset set1, Dataset set2) {
 		for(int i = 0; i < set1.size(); ++i) {
-			String[] firstEntity = set1.getEntity(i);
+			String[][] firstEntity = set1.getStoppedEntity(i);
 			for(int j = 0; j < set2.size(); ++j) {
-				String[] secondEntity = set2.getEntity(j);
+				String[][] secondEntity = set2.getStoppedEntity(j);
 				compareAndStoreEntities(firstEntity, i, secondEntity, j);
 			}
 		}
@@ -40,12 +40,12 @@ public class TokenBlocker extends Blocker {
 	 * @param secondEntity
 	 * @param secondEntityIndex
 	 */
-	private void compareAndStoreEntities(String[] firstEntity, int firstEntityIndex, String[] secondEntity, int secondEntityIndex) {
+	private void compareAndStoreEntities(String[][] firstEntity, int firstEntityIndex, String[][] secondEntity, int secondEntityIndex) {
 		// compare the two strings on how similar they are
 		for(int m = 0; m < firstEntity.length; ++m) {
 			for(int n = 0; n < secondEntity.length; ++n) {
 
-				String[] intersection = intersection(firstEntity[m].toLowerCase(), secondEntity[n].toLowerCase());
+				String[] intersection = intersection(firstEntity[m], secondEntity[n]);
 
 				for(String match : intersection) {
 					// if a match is found, add the intersections of the strings to entity clusters
@@ -64,8 +64,8 @@ public class TokenBlocker extends Blocker {
 	 * @param secondEntityIndex index (row) for the entity in the second collection
 	 */
 	private void storeMatchesToCluster(String match, int firstEntityIndex, int secondEntityIndex) {
-		Pair p1 = new Pair(0, firstEntityIndex);
-		Pair p2 = new Pair(1, secondEntityIndex);
+		Pair p1 = new Pair(0, firstEntityIndex + 1);
+		Pair p2 = new Pair(1, secondEntityIndex + 1);
 
 		if(entityClusters.containsKey(match)) {
 			List<Pair> entities = entityClusters.get(match);
@@ -88,9 +88,9 @@ public class TokenBlocker extends Blocker {
 	 * @param second
 	 * @return words that are in both strings
 	 */
-	private String[] intersection(String first, String second) {
-		HashSet<String> splitFirstEntity = new HashSet<String>(Arrays.asList(first.replace(".", "").split(",\\s|,|\\s")));
-		HashSet<String> splitSecondEntity = new HashSet<String>(Arrays.asList(second.replace(".", "").split(",\\s|,|\\s")));
+	private String[] intersection(String[] first, String[] second) {
+		HashSet<String> splitFirstEntity = new HashSet<String>(Arrays.asList(first));
+		HashSet<String> splitSecondEntity = new HashSet<String>(Arrays.asList(second));
 		splitFirstEntity.retainAll(splitSecondEntity);
 		return splitFirstEntity.toArray(new String[splitFirstEntity.size()]);
 	}

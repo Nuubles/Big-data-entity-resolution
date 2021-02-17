@@ -7,9 +7,10 @@ public class CSVReader {
 	/**
 	 * Reads a given file from path into a data set
 	 * @param filePath path to .csv file
+	 * @param stopper stopper used to remove stop words from read results
 	 * @return csv converted to dataset
 	 */
-	public Dataset read(String filePath) {
+	public Dataset read(String filePath, Stopper stopper) {
 		BufferedReader reader;
 		Dataset set = null;
 
@@ -32,7 +33,7 @@ public class CSVReader {
 					keys[index++] = keys[i];
 			}
 
-			set = new Dataset(keys, lineCount-1);
+			set = new Dataset(keys, lineCount-1, stopper);
 			index = 0;
 
 			// read attribute values, one line is one entity
