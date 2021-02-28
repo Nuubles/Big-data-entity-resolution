@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Project {
 	private ArrayList<Blocker> blockers = new ArrayList<Blocker>();
@@ -18,6 +19,15 @@ public class Project {
 		// Initialize blockers
 		Project project = new Project();
 		project.addBlocker(new TokenBlocker());
+		JaccardScheme jaccardScheme = new JaccardScheme();
+		CommonBlocksScheme commonBlocksScheme = new CommonBlocksScheme();
+		WeightEdgePruner weightEdgePruner = new WeightEdgePruner();
+		CardinalityNodePruner cardNodePruner = new CardinalityNodePruner();
+
+		project.addBlocker(new MetaBlocker(jaccardScheme, weightEdgePruner));
+		project.addBlocker(new MetaBlocker(jaccardScheme, cardNodePruner));
+		project.addBlocker(new MetaBlocker(commonBlocksScheme, weightEdgePruner));
+		project.addBlocker(new MetaBlocker(commonBlocksScheme, cardNodePruner));
 
 		// Read data from CSV files
 		Dataset set1 = project.readData(args[0]);
@@ -43,9 +53,20 @@ public class Project {
 	 * @param set2
 	 */
 	public void performBlocks(Dataset set1, Dataset set2) {
-		for(Blocker blocker : blockers) {
-			System.out.println("Running blocker " + blocker.getBlockerType() + "...");
+		System.out.println(
+			  "=======================================================================================================\n\n"
+			+ "Each blocker runs completely from start to finish, without using previously generated graphs or blocks.\n"
+			+ "This WILL take some time to operate (2000x2500 = 1h), the program is not stuck in an infinite loop.\n\n"
+			+ "=======================================================================================================\n");
+		Iterator<Blocker> iter = blockers.iterator();
+
+		while(iter.hasNext()) {
+			Blocker blocker = iter.next();
+			System.out.print("Running blocker " + blocker.getBlockerType() + "... ");
+			long startTime = System.currentTimeMillis();
 			blocker.block(set1, set2);
+			long totalTime = System.currentTimeMillis() - startTime;
+			System.out.println("Execution time: " + totalTime + "ms");
 			try {
 				String resultsFile = ".\\" + blocker.getBlockerType() + ".csv";
 				System.out.println("Writing blocker " + blocker.getBlockerType() + " results to " + resultsFile);
@@ -55,6 +76,11 @@ public class Project {
 				e.printStackTrace();
 				System.out.println("Failed to write output results for blocker " + blocker.getBlockerType() + ", please clean previous results and try again.");
 			}
+
+			// remove blocker to save memory
+			System.out.print("Deleting blocker to save RAM... ");
+			iter.remove();
+			System.out.println("Done\n\n-------------------------------------------------------------------------------------------------------\n");
 		}
 		System.out.println("All blockers have been run.");
 	}
