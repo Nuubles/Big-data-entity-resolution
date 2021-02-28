@@ -86,8 +86,8 @@ public class MetaBlocker extends Blocker {
 		// iterate each tree/block in the graph
 		for(Entry<CollectionIndex, CollectionIndex> resultPair : this.resultPairs.entrySet()) {
 			// iterate each entity in block
-			stream.write(String.format("%d-%d", resultPair.getKey().collectionIndex, resultPair.getKey().entityIndex).getBytes());
-			stream.write(String.format(",%d-%d\n", resultPair.getValue().collectionIndex, resultPair.getValue().entityIndex).getBytes());
+			stream.write(String.format("\"%d-%d\"", resultPair.getKey().collectionIndex, resultPair.getKey().entityIndex).getBytes());
+			stream.write(String.format(",\"%d-%d\"\n", resultPair.getValue().collectionIndex, resultPair.getValue().entityIndex).getBytes());
 		}
 
 		stream.close();
