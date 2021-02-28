@@ -27,5 +27,11 @@ public class CollectionIndex {
         int result = (int) (collectionIndex ^ (collectionIndex >>> 32));
         result = 31 * result + Integer.hashCode(entityIndex);
         return result;
-    }
+	}
+
+
+	@Override
+	public String toString() {
+		return "(" + collectionIndex + "," + entityIndex + ")";
+	}
 }

@@ -15,7 +15,7 @@ public class WeightEdgePruner extends Pruner {
 			List<CollectionIndex> valuesToRemove = new ArrayList<CollectionIndex>();
 
 			for(Edge edge : node.getEdges()) {
-				if(edge.weight < this.getGlobalDiscardLevel()) {
+				if(edge.weight < this.getGlobalDiscardLevel() || Double.isNaN(edge.weight)) {
 					valuesToRemove.add(edge.node.getEntityId());
 				}
 			}

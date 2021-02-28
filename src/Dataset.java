@@ -25,11 +25,13 @@ public class Dataset {
 	public void setToken(int attribute, int entity, String token) {
 		this.tokens[entity][attribute] = token.trim();
 		String[] splitted = split(token.toLowerCase());
-		for(int i = 0; i < splitted.length; ++i)
-		if(stopper != null)
-			this.stoppedTokens[entity][attribute] = stopper.stop(splitted);
-		else
-			this.stoppedTokens[entity][attribute] = splitted;
+
+		for(int i = 0; i < splitted.length; ++i) {
+			if(stopper != null)
+				this.stoppedTokens[entity][attribute] = stopper.stop(splitted);
+			else
+				this.stoppedTokens[entity][attribute] = splitted;
+		}
 	}
 
 
@@ -69,6 +71,11 @@ public class Dataset {
 
 	public int size() {
 		return tokens.length;
+	}
+
+
+	public int getColumnCount() {
+		return attributes.length;
 	}
 
 

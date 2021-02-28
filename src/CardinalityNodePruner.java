@@ -14,11 +14,15 @@ public class CardinalityNodePruner extends Pruner {
 		PriorityQueue<Edge> queue = new PriorityQueue<Edge>();
 
 		for(Node node : graph.getNodes().values()) {
-			double limit = node.getEdges().size() * 0.5;
+			double limit = node.getEdges().size() * 0.1;
 
 			ArrayList<Edge> list = new ArrayList<Edge>(node.getEdges());
 			for(int i = 0; i < list.size(); ++i) {
 				Edge edge = list.get(i);
+				if(Double.isNaN(edge.weight)) {
+					edge.parent.removeEdge(edge.node.getEntityId());
+				}
+
 				queue.add(edge);
 
 				if(queue.size() > limit) {

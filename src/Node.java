@@ -48,6 +48,16 @@ public class Node {
 		}
 		return neighbors;
 	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Node) {
+			Node node = (Node)o;
+			return this.entityKey.equals(node.entityKey);
+		}
+		return false;
+	}
 }
 
 class Edge implements Comparable<Edge> {
@@ -65,5 +75,14 @@ class Edge implements Comparable<Edge> {
 	@Override
 	public int compareTo(Edge o) {
 		return Double.compare(weight, o.weight);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Edge) {
+			Edge e = (Edge)o;
+			return e.node.equals(node) && e.parent.equals(parent);
+		}
+		return false;
 	}
 }

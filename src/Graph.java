@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class Graph {
 	private double weightMean;
@@ -13,51 +12,16 @@ public class Graph {
 	// map<token, map<collection, entity>>
 	//private HashMap<String, HashMap<Integer, List<Node>>> entityTokens = new HashMap<String, HashMap<Integer, List<Node>>>();
 
-	/**
-	 * Adds an entity into the graph, and creates edges between other nodes if they
-	 * share tokens. The edges have NaN weights by default
-	 * @param entity
-	 * @param entityId
-	 */
-	/*public void addEntity(String[][] stoppedEntity, CollectionIndex entityId) {
-		if(!nodes.containsKey(entityId.collectionIndex))
-			nodes.put(entityId.collectionIndex, new HashMap<Integer, Node>());
 
-		Node node = new Node(entityId);
-		// add the node to the node map
-		nodes.get(entityId.collectionIndex).put(entityId.entityIndex, node);
+	public void addNode(CollectionIndex index) {
+		Node node = new Node(index);
+		nodes.put(index, node);
+	}
 
-		for(String[] tokens : stoppedEntity) {
-			for(String token : tokens) {
-				if(!entityTokens.containsKey(token))
-					entityTokens.put(token, new HashMap<Integer, List<Node>>());
 
-				HashMap<Integer, List<Node>> entityMap = entityTokens.get(token);
-
-				// some nodes with this token already exist, add an edge
-				// between them
-				for(Entry<Integer, List<Node>> entry : entityMap.entrySet()) {
-					// the entities belong to the same collection, no need to add an edge between them
-					if(entry.getKey() == node.getEntityId().collectionIndex)
-						continue;
-
-					for(Node n : entry.getValue()) {
-						n.addEdge(node);
-						node.addEdge(n);
-					}
-				}
-
-				// add the created node to the entitytoken collection
-				if(entityMap.containsKey(entityId.collectionIndex)) {
-					entityMap.get(entityId.collectionIndex).add(node);
-				} else {
-					List<Node> nodeList = new ArrayList<Node>();
-					nodeList.add(node);
-					entityMap.put(entityId.collectionIndex, nodeList);
-				}
-			}
-		}
-	}*/
+	public Node getNode(CollectionIndex index) {
+		return nodes.get(index);
+	}
 
 
 	public void addBlocks(HashMap<String, List<CollectionIndex>> clusters) {

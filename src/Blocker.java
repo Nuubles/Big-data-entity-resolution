@@ -51,8 +51,11 @@ public abstract class Blocker {
 	protected void compareAndStoreEntities(String[][] firstEntity, int firstEntityIndex, String[][] secondEntity, int secondEntityIndex) {
 		// compare the two strings on how similar they are
 		for(int m = 0; m < firstEntity.length; ++m) {
+			if(firstEntity[m] == null)
+				continue;
 			for(int n = 0; n < secondEntity.length; ++n) {
-
+				if(secondEntity[n] == null)
+					continue;
 				String[] intersection = intersection(firstEntity[m], secondEntity[n]);
 
 				for(String match : intersection) {
@@ -104,6 +107,6 @@ public abstract class Blocker {
 	}
 
 
-	public abstract void block(Dataset set1, Dataset set2);
+	public abstract void block(Dataset set1, Dataset set2, double jaccardSimilarity);
 	public abstract void writeResults(String filePath) throws IOException;
 }

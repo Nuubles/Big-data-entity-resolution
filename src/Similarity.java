@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,5 +34,31 @@ public class Similarity {
 		}
 
 		return (double)intersection.size() / union.size();
+	}
+
+
+	public static double jaccardSimilarity(String[] firstStopped, String[] secondStopped) {
+		Set<String> set1 = new HashSet<String>();
+		Set<String> set2 = new HashSet<String>();
+		set1.addAll(Arrays.asList(firstStopped));
+		set2.addAll(Arrays.asList(secondStopped));
+		Set<String> union = new HashSet<String>(set1);
+		union.addAll(set2);
+		set1.retainAll(set2);
+		return (double)set1.size()/union.size();
+	}
+
+
+	public static double jaccardSimilarity(String[][] firstStopped, String[][] secondStopped) {
+		Set<String> set1 = new HashSet<String>();
+		Set<String> set2 = new HashSet<String>();
+		for(String[] arr : firstStopped)
+			set1.addAll(Arrays.asList(arr));
+		for(String[] arr : secondStopped)
+			set2.addAll(Arrays.asList(arr));
+		Set<String> union = new HashSet<String>(set1);
+		union.addAll(set2);
+		set1.retainAll(set2);
+		return (double)set1.size()/union.size();
 	}
 }

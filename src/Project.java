@@ -11,14 +11,16 @@ public class Project {
 	 * csv files containing the data to be blocked
 	 */
 	public static void main(String[] args) {
-		if(args.length != 2) {
-			System.out.println("Please give paths to 2 files containing the data to be blocked when booting the program.");
+		if(args.length != 3) {
+			System.out.println("Please give paths to 2 files containing the data to be blocked when booting the program and the jaccard similarity to be used when comparing entities, for example 0.3");
 			return;
 		}
 
 		// Initialize blockers
 		Project project = new Project();
 		project.addBlocker(new TokenBlocker());
+		project.addBlocker(new AttributeClusterBlocker());
+
 		JaccardScheme jaccardScheme = new JaccardScheme();
 		CommonBlocksScheme commonBlocksScheme = new CommonBlocksScheme();
 		WeightEdgePruner weightEdgePruner = new WeightEdgePruner();
@@ -42,8 +44,17 @@ public class Project {
 			return;
 		}
 
+		double jaccard;
+		try {
+			jaccard = Double.parseDouble(args[2]);
+		} catch(NumberFormatException e) {
+			e.printStackTrace();
+			System.out.println("The third number must be a double value");
+			return;
+		}
+
 		// Performs blocks for the two given data sets
-		project.performBlocks(set1, set2);
+		project.performBlocks(set1, set2, jaccard);
 	}
 
 
@@ -52,7 +63,7 @@ public class Project {
 	 * @param set1
 	 * @param set2
 	 */
-	public void performBlocks(Dataset set1, Dataset set2) {
+	public void performBlocks(Dataset set1, Dataset set2, double jaccard) {
 		System.out.println(
 			  "=======================================================================================================\n\n"
 			+ "Each blocker runs completely from start to finish, without using previously generated graphs or blocks.\n"
@@ -64,7 +75,7 @@ public class Project {
 			Blocker blocker = iter.next();
 			System.out.print("Running blocker " + blocker.getBlockerType() + "... ");
 			long startTime = System.currentTimeMillis();
-			blocker.block(set1, set2);
+			blocker.block(set1, set2, jaccard);
 			long totalTime = System.currentTimeMillis() - startTime;
 			System.out.println("Execution time: " + totalTime + "ms");
 			try {

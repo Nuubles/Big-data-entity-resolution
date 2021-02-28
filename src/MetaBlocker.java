@@ -1,13 +1,16 @@
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 public class MetaBlocker extends Blocker {
 	private Pruner pruner;
 	private Scheme scheme;
 	private Graph results;
+	HashMap<CollectionIndex, CollectionIndex> resultPairs = new HashMap<CollectionIndex, CollectionIndex>();
 
 	public MetaBlocker(Scheme scheme, Pruner pruner) {
 		super("Meta blocker");
@@ -18,38 +21,55 @@ public class MetaBlocker extends Blocker {
 
 
 	@Override
-	public void block(Dataset set1, Dataset set2) {
+	public void block(Dataset set1, Dataset set2, double jaccardSimilarity) {
 		Graph graph = new Graph();
 		this.constructBasicBlocks(set1, set2);
 		graph.addBlocks(entityClusters);
 
-		// construct graph nodes and edges
-		/*System.out.println(1);
-		for(int i = 0; i < set1.size(); ++i) {
-			String[][] stoppedEntity = set1.getStoppedEntity(i);
-			graph.addEntity(stoppedEntity, new CollectionIndex(0, i));
-		}
-		System.out.println(2);
-		for(int i = 0; i < set2.size(); ++i) {
-			String[][] stoppedEntity = set2.getStoppedEntity(i);
-			graph.addEntity(stoppedEntity, new CollectionIndex(1, i));
-		}*/
-		//System.out.println(3);
 		// add weights to the edges in the graph
 		this.scheme.weightEdges(graph);
-		//System.out.println(4);
 		// make the graph discard edges with the edge weight mean
 		// if the pruner uses global discard levels
 		this.pruner.setGlobalDiscordLevel(graph.getEdgeWeightMean());
-		//System.out.println(5);
-		if(pruner instanceof CardinalityNodePruner) {
-			this.pruner.setGlobalDiscordLevel(set1.size() + set2.size());
-		}
-		//System.out.println(6);
 		// prune the edges in the graph
 		this.pruner.prune(graph);
 		//System.out.println(7);
 		this.results = graph;
+
+		HashMap<CollectionIndex, CollectionIndex> pairs = new HashMap<CollectionIndex, CollectionIndex>();
+
+		for(List<CollectionIndex> block : results.getBlocks()) {
+			for(int i = 0; i < block.size(); ++i) {
+				for(int j = i+1; j < block.size(); ++j) {
+					CollectionIndex first = block.get(i);
+					CollectionIndex second = block.get(j);
+					// if the elements are in the same collection, skip them
+					if(first.collectionIndex == second.collectionIndex)
+						continue;
+
+					String[][] firstEntity;
+					String[][] secondEntity;
+
+					if(first.collectionIndex == 0) {
+						firstEntity = set1.getStoppedEntity(first.entityIndex);
+					} else {
+						firstEntity = set2.getStoppedEntity(first.entityIndex);
+					}
+
+					if(second.collectionIndex == 0) {
+						secondEntity = set1.getStoppedEntity(second.entityIndex);
+					} else {
+						secondEntity = set2.getStoppedEntity(second.entityIndex);
+					}
+
+					if(jaccardSimilarity <= Similarity.jaccardSimilarity(firstEntity, secondEntity)) {
+						pairs.put(first, second);
+					}
+				}
+			}
+		}
+
+		this.resultPairs = pairs;
 	}
 
 
@@ -60,24 +80,16 @@ public class MetaBlocker extends Blocker {
 			return;
 		}
 
-		List<List<CollectionIndex>> blocks = results.getBlocks();
-		System.out.println("Blocks size: " + blocks.size());
-
 		File file = new File(filePath);
 		file.createNewFile();
 		FileOutputStream stream = new FileOutputStream(file);
-		stream.write("\"block\",\"collection\",\"entity\"\n".getBytes());
-		int blockIndex = 0;
+		stream.write("\"collection-entity\",\"collection-entity\"\n".getBytes());
 
 		// iterate each tree/block in the graph
-		for(List<CollectionIndex> block : blocks) {
+		for(Entry<CollectionIndex, CollectionIndex> resultPair : this.resultPairs.entrySet()) {
 			// iterate each entity in block
-			for(CollectionIndex i : block) {
-				stream.write(Integer.toString(blockIndex).getBytes());
-				stream.write(String.format(",%d", i.collectionIndex).getBytes());
-				stream.write(String.format(",%d\n", i.entityIndex).getBytes());
-			}
-			++blockIndex;
+			stream.write(String.format("%d-%d", resultPair.getKey().collectionIndex, resultPair.getKey().entityIndex).getBytes());
+			stream.write(String.format(",%d-%d\n", resultPair.getValue().collectionIndex, resultPair.getValue().entityIndex).getBytes());
 		}
 
 		stream.close();
