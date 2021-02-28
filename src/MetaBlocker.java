@@ -33,7 +33,6 @@ public class MetaBlocker extends Blocker {
 		this.pruner.setGlobalDiscordLevel(graph.getEdgeWeightMean());
 		// prune the edges in the graph
 		this.pruner.prune(graph);
-		//System.out.println(7);
 		this.results = graph;
 
 		HashMap<CollectionIndex, CollectionIndex> pairs = new HashMap<CollectionIndex, CollectionIndex>();

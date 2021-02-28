@@ -99,7 +99,6 @@ public class Graph {
 				// add the current node to the tree
 				block.add(n.getEntityId());
 				looped.add(n.getEntityId());
-				//System.out.println(n.getEntityId().collectionIndex + " " + n.getEntityId().entityIndex);
 
 				HashSet<Node> neigh = n.getNeighbors();
 				neigh.removeAll(queue);
