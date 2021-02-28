@@ -46,13 +46,13 @@ public class AttributeClusterBlocker extends Blocker {
 							if(firstColumn.collectionIndex == 0) {
 								if(set1.getStoppedEntity(m)[firstColumn.entityIndex] != null
 									&& set2.getStoppedEntity(n)[secondColumn.entityIndex] != null
-									&& jaccard <= Similarity.jaccardSimilarity(set1.getStoppedEntity(m)[firstColumn.entityIndex], set2.getStoppedEntity(n)[secondColumn.entityIndex])) {
+									&& jaccard/2 <= Similarity.jaccardSimilarity(set1.getStoppedEntity(m)[firstColumn.entityIndex], set2.getStoppedEntity(n)[secondColumn.entityIndex])) {
 									pairs.put(new CollectionIndex(0, m), new CollectionIndex(1, n));
 								}
 							} else {
 								if(set1.getStoppedEntity(n)[secondColumn.entityIndex] != null
 									&& set2.getStoppedEntity(m)[firstColumn.entityIndex] != null
-									&& jaccard <= Similarity.jaccardSimilarity(set2.getStoppedEntity(m)[firstColumn.entityIndex], set1.getStoppedEntity(n)[secondColumn.entityIndex])) {
+									&& jaccard/2 <= Similarity.jaccardSimilarity(set2.getStoppedEntity(m)[firstColumn.entityIndex], set1.getStoppedEntity(n)[secondColumn.entityIndex])) {
 									pairs.put(new CollectionIndex(0, n), new CollectionIndex(1, m));
 								}
 							}
