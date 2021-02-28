@@ -52,18 +52,17 @@ public class MetaBlocker extends Blocker {
 
 					if(first.collectionIndex == 0) {
 						firstEntity = set1.getStoppedEntity(first.entityIndex);
+						secondEntity = set2.getStoppedEntity(second.entityIndex);
 					} else {
 						firstEntity = set2.getStoppedEntity(first.entityIndex);
-					}
-
-					if(second.collectionIndex == 0) {
 						secondEntity = set1.getStoppedEntity(second.entityIndex);
-					} else {
-						secondEntity = set2.getStoppedEntity(second.entityIndex);
 					}
 
 					if(jaccardSimilarity <= Similarity.jaccardSimilarity(firstEntity, secondEntity)) {
-						pairs.put(first, second);
+						if(first.collectionIndex == 0)
+							pairs.put(first, second);
+						else
+							pairs.put(second, first);
 					}
 				}
 			}

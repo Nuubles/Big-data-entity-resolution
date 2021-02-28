@@ -14,7 +14,7 @@ public class CardinalityNodePruner extends Pruner {
 		PriorityQueue<Edge> queue = new PriorityQueue<Edge>();
 
 		for(Node node : graph.getNodes().values()) {
-			double limit = node.getEdges().size() * 0.1;
+			double limit = node.getEdges().size() * 0.2;
 
 			ArrayList<Edge> list = new ArrayList<Edge>(node.getEdges());
 			for(int i = 0; i < list.size(); ++i) {

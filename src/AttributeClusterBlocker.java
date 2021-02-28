@@ -25,8 +25,8 @@ public class AttributeClusterBlocker extends Blocker {
 		HashMap<Integer, HashSet<String>> set2ColumnStrings = getColumnStringSets(set2);
 
 		Graph jaccardGraph = new Graph();
-		connectMatchingColumns(set1ColumnStrings, set2ColumnStrings, jaccardGraph);
-		connectMatchingColumns(set2ColumnStrings, set1ColumnStrings, jaccardGraph);
+		connectMatchingColumns(set1ColumnStrings, 0, set2ColumnStrings, 1, jaccardGraph);
+		connectMatchingColumns(set2ColumnStrings, 1, set1ColumnStrings, 0, jaccardGraph);
 		this.results = jaccardGraph;
 
 		HashMap<CollectionIndex, CollectionIndex> pairs = new HashMap<CollectionIndex, CollectionIndex>();
@@ -35,22 +35,25 @@ public class AttributeClusterBlocker extends Blocker {
 		for(List<CollectionIndex> blockCollection : blocks) {
 			for(int i = 0; i < blockCollection.size(); ++i) {
 				CollectionIndex firstColumn = blockCollection.get(i);
-				for(int j = i; j < blockCollection.size(); ++j) {
-					CollectionIndex secondColumn = blockCollection.get(i);
 
+				for(int j = 0; j < blockCollection.size(); ++j) {
+					CollectionIndex secondColumn = blockCollection.get(j);
 					if(firstColumn.collectionIndex == secondColumn.collectionIndex)
 						continue;
-
 					// loop entities
 					for(int m = 0; m < set1.size(); ++m) {
 						for(int n = 0; n < set2.size(); ++n) {
 							if(firstColumn.collectionIndex == 0) {
-								if(jaccard <= Similarity.jaccardSimilarity(set1.getStoppedEntity(m)[firstColumn.entityIndex], set2.getStoppedEntity(n)[secondColumn.entityIndex])) {
+								if(set1.getStoppedEntity(m)[firstColumn.entityIndex] != null
+									&& set2.getStoppedEntity(n)[secondColumn.entityIndex] != null
+									&& jaccard <= Similarity.jaccardSimilarity(set1.getStoppedEntity(m)[firstColumn.entityIndex], set2.getStoppedEntity(n)[secondColumn.entityIndex])) {
 									pairs.put(new CollectionIndex(0, m), new CollectionIndex(1, n));
 								}
 							} else {
-								if(jaccard <= Similarity.jaccardSimilarity(set2.getStoppedEntity(m)[firstColumn.entityIndex], set1.getStoppedEntity(n)[secondColumn.entityIndex])) {
-									pairs.put(new CollectionIndex(1, m), new CollectionIndex(0, n));
+								if(set1.getStoppedEntity(n)[secondColumn.entityIndex] != null
+									&& set2.getStoppedEntity(m)[firstColumn.entityIndex] != null
+									&& jaccard <= Similarity.jaccardSimilarity(set2.getStoppedEntity(m)[firstColumn.entityIndex], set1.getStoppedEntity(n)[secondColumn.entityIndex])) {
+									pairs.put(new CollectionIndex(0, n), new CollectionIndex(1, m));
 								}
 							}
 						}
@@ -65,7 +68,9 @@ public class AttributeClusterBlocker extends Blocker {
 
 	private void connectMatchingColumns(
 		HashMap<Integer, HashSet<String>> set1ColumnStrings,
+		int setNum,
 		HashMap<Integer, HashSet<String>> set2ColumnStrings,
+		int setNum_,
 		Graph jaccardGraph) {
 
 		for(Entry<Integer, HashSet<String>> entry1 : set1ColumnStrings.entrySet()) {
@@ -88,8 +93,8 @@ public class AttributeClusterBlocker extends Blocker {
 				}
 			}
 
-			CollectionIndex entry1Index = new CollectionIndex(0, entry1.getKey());
-			CollectionIndex entry2Index = new CollectionIndex(1, highestColumn);
+			CollectionIndex entry1Index = new CollectionIndex(setNum, entry1.getKey());
+			CollectionIndex entry2Index = new CollectionIndex(setNum_, highestColumn);
 
 			if(jaccardGraph.getNode(entry1Index) == null) {
 				jaccardGraph.addNode(entry1Index);
@@ -113,7 +118,8 @@ public class AttributeClusterBlocker extends Blocker {
 
 			for(int j = 0; j < set.size(); ++j) {
 				String[][] stoppedEntity = set.getStoppedEntity(j);
-				//System.out.println(i +" " + j + " " + set.size() + " " + (stoppedEntity[i] == null));
+
+				if(stoppedEntity[i] != null)
 				for(String columnText : stoppedEntity[i]) {
 					if(columnText != null)
 						set1Strings.add(columnText);

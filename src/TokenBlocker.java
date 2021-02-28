@@ -37,7 +37,7 @@ public class TokenBlocker extends Blocker {
 					}
 				} else {
 					if(jaccardSimilarity <= Similarity.jaccardSimilarity(set2.getStoppedEntity(first.entityIndex), set1.getStoppedEntity(second.entityIndex))) {
-						resultPairs.put(first,second);
+						resultPairs.put(second, first);
 					}
 				}
 			}

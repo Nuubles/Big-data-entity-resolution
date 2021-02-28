@@ -40,8 +40,12 @@ public class Similarity {
 	public static double jaccardSimilarity(String[] firstStopped, String[] secondStopped) {
 		Set<String> set1 = new HashSet<String>();
 		Set<String> set2 = new HashSet<String>();
-		set1.addAll(Arrays.asList(firstStopped));
-		set2.addAll(Arrays.asList(secondStopped));
+		for(String s : firstStopped)
+			if(s != null)
+				set1.add(s);
+		for(String s : secondStopped)
+			if(s != null)
+				set2.add(s);
 		Set<String> union = new HashSet<String>(set1);
 		union.addAll(set2);
 		set1.retainAll(set2);
@@ -52,10 +56,18 @@ public class Similarity {
 	public static double jaccardSimilarity(String[][] firstStopped, String[][] secondStopped) {
 		Set<String> set1 = new HashSet<String>();
 		Set<String> set2 = new HashSet<String>();
-		for(String[] arr : firstStopped)
-			set1.addAll(Arrays.asList(arr));
-		for(String[] arr : secondStopped)
-			set2.addAll(Arrays.asList(arr));
+		for(String[] arr : firstStopped) {
+			if(arr != null)
+			for(String s : arr)
+				if(s != null)
+					set1.add(s);
+		}
+		for(String[] arr : secondStopped) {
+			if(arr != null)
+			for(String s : arr)
+				if(s != null)
+					set2.add(s);
+		}
 		Set<String> union = new HashSet<String>(set1);
 		union.addAll(set2);
 		set1.retainAll(set2);

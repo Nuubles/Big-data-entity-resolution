@@ -75,8 +75,8 @@ public abstract class Blocker {
 	 * @param secondEntityIndex index (row) for the entity in the second collection
 	 */
 	protected void storeMatchesToCluster(String match, int firstEntityIndex, int secondEntityIndex) {
-		CollectionIndex p1 = new CollectionIndex(0, firstEntityIndex + 1);
-		CollectionIndex p2 = new CollectionIndex(1, secondEntityIndex + 1);
+		CollectionIndex p1 = new CollectionIndex(0, firstEntityIndex);
+		CollectionIndex p2 = new CollectionIndex(1, secondEntityIndex);
 
 		if(entityClusters.containsKey(match)) {
 			List<CollectionIndex> entities = entityClusters.get(match);
